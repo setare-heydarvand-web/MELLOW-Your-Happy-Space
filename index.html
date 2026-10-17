@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#fff8f4">
+    <title>MELLOW — Your Happy Space</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <!-- Custom CSS -->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cream: #fff8f4;
+            --rose: #d99a98;
+            --ink: #332b2b;
+            --muted: #938282;
+            --border: #f3e5df;
+            --soft: #fff1eb;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--cream);
+            color: var(--ink);
+            font-family: Inter, "Segoe UI", sans-serif;
+        }
+
+        button,
+        input,
+        textarea,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .card {
+            padding: 22px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+        }
+
+        .sidebar {
+            background: #fffaf7;
+            border-color: var(--border);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 10px;
+            border: 1px solid transparent;
+            border-radius: 14px;
+            color: #8d777d;
+            transition: background .2s, border-color .2s;
+        }
+
+        .nav-link:hover {
+            background: white;
+            border-color: var(--border);
+        }
+
+        .nav-link.active {
+            background: #f6e5df;
+            border-color: #f0dcd4;
+            color: #805b59;
+        }
+
+        .nav-icon {
+            display: flex;
+            width: 38px;
+            height: 38px;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background: white;
+            font-size: 19px;
+        }
+
+        .field {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #f0dfd9;
+            border-radius: 13px;
+            background: #fffaf7;
+            outline: none;
+        }
+
+        .field:focus {
+            border-color: var(--rose);
+        }
+
+        .task-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: white;
+        }
+
+        .task-title {
+            flex: 1;
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .task-row.completed .task-title {
+            color: #aa9b9b;
+            text-decoration: line-through;
+        }
+
+        .task-check {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            accent-color: var(--rose);
+        }
+
+        .task-action {
+            padding: 7px 10px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .edit-btn {
+            background: #fff1eb;
+            color: #805b59;
+        }
+
+        .delete-btn {
+            background: #fff0ef;
+            color: #b04444;
+        }
+
+        #snakeCanvas {
+            display: block;
+            width: 100%;
+            max-width: 420px;
+            height: auto;
+            margin: auto;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            background: #fffaf7;
+            touch-action: none;
+        }
+
+        .game-key {
+            width: 48px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--soft);
+            color: #805b59;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 640px) {
+            .task-row {
+                flex-wrap: wrap;
+            }
+
+            .task-title {
+                width: calc(100% - 45px);
+            }
+
+            .task-actions {
+                margin-left: 30px;
+            }
+
+            .card {
+                padding: 17px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mx-auto flex min-h-screen max-w-7xl">
+
+        <!-- Sidebar -->
+        <aside class="sidebar hidden w-64 shrink-0 border-r p-5 md:flex md:flex-col">
+
+            <!-- Brand -->
+            <a href="#home" class="mb-9 flex items-center gap-3 px-2">
+                <div
+                    class="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#332b2b] text-xl font-bold text-white">
+                    m.
+                </div>
+                <div>
+                    <span class="block text-2xl font-black tracking-tight">
+                        mellow<span class="text-[#d99a98]">.</span>
+                    </span>
+                    <span class="text-xs text-[#a58e8b]">YOUR HAPPY SPACE</span>
+                </div>
+            </a>
+
+            <!-- Workspace Profile -->
+            <div class="mb-8 rounded-2xl border border-[#f3e5df] bg-white p-4">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-11 w-11 items-center justify-center rounded-full bg-[#f6ded7] text-xl">
+                        🌷
+                    </div>
+                    <div>
+                        <p class="font-bold">My Workspace</p>
+                        <p class="mt-1 text-xs text-[#a58e8b]">One day at a time</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <p class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[.2em] text-[#b4a2a0]">
+                MENU
+            </p>
+
+            <nav class="space-y-2">
+                <a href="#home" class="nav-link active">
+                    <span class="nav-icon">⌂</span>
+                    <span class="font-semibold">Dashboard</span>
+                </a>
+
+                <a href="#tasks" class="nav-link">
+                    <span class="nav-icon">✓</span>
+                    <span class="font-semibold">My Tasks</span>
+                </a>
+
+                <a href="#focus" class="nav-link">
+                    <span class="nav-icon">◷</span>
+                    <span class="font-semibold">Focus Timer</span>
+                </a>
+
+                <a href="#snake-game" class="nav-link">
+                    <span class="nav-icon">🐍</span>
+                    <span class="font-semibold">Play & Focus</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="min-w-0 flex-1 p-4 sm:p-7 lg:p-10">
+
+            <!-- Header -->
+            <header id="home" class="mb-8 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <p class="mb-1 text-sm text-[#a58e8b]">YOUR PERSONAL SPACE</p>
+                    <h1 class="text-3xl font-black sm:text-4xl">Hello, sunshine ☀️</h1>
+                    <p class="mt-2 text-sm text-[#938282]">Make today a little softer.</p>
+                </div>
+
+                <button id="welcomeBtn"
+                    class="rounded-full bg-[#332b2b] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#594747]">
+                    A little motivation ✨
+                </button>
+            </header>
+
+            <!-- Dashboard Statistics -->
+            <section class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div class="card">
+                    <p class="text-sm text-[#938282]">Total tasks</p>
+                    <p id="totalCount" class="mt-2 text-3xl font-black">0</p>
+                </div>
+
+                <div class="card">
+                    <p class="text-sm text-[#938282]">Completed</p>
+                    <p id="completedCount" class="mt-2 text-3xl font-black">0</p>
+                </div>
+
+                <div class="card">
+                    <p class="text-sm text-[#938282]">Progress</p>
+                    <p id="progressPercent" class="mt-2 text-3xl font-black">0%</p>
+                    <div class="mt-3 h-2 overflow-hidden rounded-full bg-[#f8eae5]">
+                        <div id="progressBar" class="h-full rounded-full bg-[#d99a98] transition-all" style="width: 0%">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tasks Section -->
+            <section id="tasks" class="card mb-8">
+                <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <p class="mb-1 text-sm text-[#b08e8a]">YOUR DAILY PLAN</p>
+                        <h2 class="text-2xl font-black">My Tasks ✍️</h2>
+                    </div>
+                    <span id="taskBadge"
+                        class="rounded-full bg-[#fff1eb] px-4 py-2 text-sm font-semibold text-[#805b59]">
+                        0 tasks
+                    </span>
+                </div>
+
+                <!-- Add and Edit Form -->
+                <form id="taskForm" class="mb-5 flex flex-col gap-3 sm:flex-row">
+                    <input id="taskInput" class="field flex-1" type="text" maxlength="150"
+                        placeholder="What would you like to do?" autocomplete="off" required>
+
+
+                    <button id="submitTaskBtn" type="submit"
+                        class="rounded-xl bg-[#d99a98] px-6 py-3 font-bold text-white transition hover:bg-[#c98583]">
+                        + Add Task
+                    </button>
+                </form>
+
+                <!-- Edit Mode -->
+                <div id="editNotice"
+                    class="mb-4 hidden items-center justify-between rounded-xl bg-[#fff1eb] p-3 text-sm text-[#805b59]">
+                    Editing task...
+                    <button id="cancelEditBtn" type="button" class="font-bold underline">Cancel</button>
+                </div>
+
+                <!-- Task Filters -->
+                <div class="mb-5 flex flex-wrap gap-2">
+                    <button type="button" data-filter="all"
+                        class="filter-btn rounded-full bg-[#332b2b] px-4 py-2 text-sm font-semibold text-white">All</button>
+                    <button type="button" data-filter="active"
+                        class="filter-btn rounded-full bg-[#fff1eb] px-4 py-2 text-sm font-semibold text-[#805b59]">Active</button>
+                    <button type="button" data-filter="completed"
+                        class="filter-btn rounded-full bg-[#fff1eb] px-4 py-2 text-sm font-semibold text-[#805b59]">Completed</button>
+                </div>
+
+                <!-- Tasks are rendered here by JavaScript -->
+                <div id="taskList" class="space-y-3"></div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="py-8 text-center">
+                    <p class="mb-2 text-4xl">🌷</p>
+                    <p class="font-bold">Your list is waiting for you.</p>
+                    <p class="mt-2 text-sm text-[#938282]">Add your first task above.</p>
+                </div>
+
+                <div class="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[#f3e5df] pt-5">
+                    <p id="taskSummary" class="text-sm text-[#938282]">No tasks yet.</p>
+                    <button id="clearCompletedBtn" type="button"
+                        class="text-sm font-semibold text-[#b04444] hover:underline">
+                        Clear completed
+                    </button>
+                </div>
+            </section>
+
+            <!-- Focus Timer -->
+            <section id="focus" class="card mb-8 text-center">
+                <p class="mb-2 text-sm font-bold uppercase tracking-widest text-[#b08e8a]">
+                    TAKE A BREATH
+                </p>
+                <h2 class="mb-5 text-2xl font-black">Focus Time ⏳</h2>
+
+                <div id="timerDisplay" class="mb-6 text-6xl font-black tabular-nums">25:00</div>
+
+                <div class="mb-5 flex flex-wrap justify-center gap-2">
+                    <button type="button" data-minutes="25"
+                        class="timer-preset rounded-full bg-[#fff1eb] px-4 py-2 text-sm font-semibold text-[#805b59]">
+                        Focus · 25 min
+                    </button>
+                    <button type="button" data-minutes="5"
+                        class="timer-preset rounded-full bg-[#fff1eb] px-4 py-2 text-sm font-semibold text-[#805b59]">
+                        Break · 5 min
+                    </button>
+                </div>
+
+                <div class="flex justify-center gap-3">
+                    <button id="startTimerBtn" type="button"
+                        class="rounded-xl bg-[#332b2b] px-6 py-3 font-bold text-white">Start</button>
+                    <button id="resetTimerBtn" type="button"
+                        class="rounded-xl bg-[#f8eae5] px-6 py-3 font-bold text-[#805b59]">Reset</button>
+                </div>
+
+                <p id="timerMessage" class="mt-4 text-sm text-[#938282]">
+                    One thing at a time. You've got this.
+                </p>
+            </section>
+
+            <!-- Snake Game -->
+            <section id="snake-game" class="card mb-8">
+                <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <p class="mb-1 text-sm font-bold uppercase tracking-widest text-[#b08e8a]">
+                            PLAY & FOCUS
+                        </p>
+                        <h2 class="text-2xl font-black">Little Snake 🐍</h2>
+                        <p class="mt-2 text-sm text-[#938282]">
+                            Eat the fruit. Don't hit the wall or yourself!
+                        </p>
+                    </div>
+
+                    <div class="rounded-2xl bg-[#fff1eb] px-5 py-3 text-center">
+                        <p class="text-xs text-[#8d777d]">YOUR SCORE</p>
+                        <p id="snakeScore" class="text-2xl font-black">0</p>
+                    </div>
+                </div>
+
+                <canvas id="snakeCanvas" width="400" height="400"></canvas>
+
+                <div class="mt-5 flex flex-wrap justify-center gap-3">
+                    <button id="startSnakeBtn" type="button"
+                        class="rounded-xl bg-[#332b2b] px-6 py-3 font-bold text-white">Start Game</button>
+                    <button id="pauseSnakeBtn" type="button"
+                        class="rounded-xl bg-[#f8eae5] px-6 py-3 font-bold text-[#805b59]">Pause</button>
+                </div>
+
+                <!-- Mobile Game Controls -->
+                <div class="mt-5 grid justify-center gap-2">
+                    <div class="flex justify-center">
+                        <button type="button" class="game-key" data-direction="up" aria-label="Up">↑</button>
+                    </div>
+                    <div class="flex justify-center gap-2">
+                        <button type="button" class="game-key" data-direction="left" aria-label="Left">←</button>
+                        <button type="button" class="game-key" data-direction="down" aria-label="Down">↓</button>
+                        <button type="button" class="game-key" data-direction="right" aria-label="Right">→</button>
+                    </div>
+                </div>
+
+                <p id="snakeMessage" class="mt-4 text-center text-sm text-[#938282]">
+                    Press Start Game. Use the arrow keys to move.
+                </p>
+            </section>
+
+            <!-- Footer -->
+            <footer class="mt-6 py-5 text-center text-sm text-[#b4a2a0]">
+                Made with care ♡ SETARE
+            </footer>
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const $ = (selector) => document.querySelector(selector);
+
+            // --------------------------------
+            // Local storage helpers
+            // --------------------------------
+            function loadData(key, fallback) {
+                try {
+                    const saved = localStorage.getItem(key);
+                    return saved === null ? fallback : JSON.parse(saved);
+                } catch {
+                    return fallback;
+                }
+            }
+
+            function saveData(key, value) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch {
+                    alert("Your browser could not save the data.");
+                    return false;
+                }
+            }
+
+            // =================================
+            // TASKS
+            // =================================
+            let tasks = loadData("mellowTasks", []);
+            if (!Array.isArray(tasks)) tasks = [];
+
+            tasks = tasks
+                .filter((task) => task && typeof task.title === "string")
+                .map((task) => ({
+                    id: String(task.id || Date.now() + Math.random()),
+                    title: task.title,
+                    priority: ["Low", "Medium", "High"].includes(task.priority)
+                        ? task.priority : "Medium",
+                    completed: Boolean(task.completed)
+                }));
+
+            let currentFilter = "all";
+            let editingTaskId = null;
+
+            const taskForm = $("#taskForm");
+            const taskInput = $("#taskInput");
+            const priorityInput = {
+                value: "Medium"
+            };
+            const taskList = $("#taskList");
+            const emptyState = $("#emptyState");
+            const submitTaskBtn = $("#submitTaskBtn");
+            const editNotice = $("#editNotice");
+
+            function persistTasks() {
+                saveData("mellowTasks", tasks);
+            }
+
+            // Update dashboard counters and progress.
+            function updateStats() {
+                const total = tasks.length;
+                const completed = tasks.filter((task) => task.completed).length;
+                const percent = total ? Math.round(completed / total * 100) : 0;
+
+                $("#totalCount").textContent = total;
+                $("#completedCount").textContent = completed;
+                $("#progressPercent").textContent = percent + "%";
+                $("#progressBar").style.width = percent + "%";
+                $("#taskBadge").textContent = total + (total === 1 ? " task" : " tasks");
+                $("#taskSummary").textContent = total
+                    ? `${completed} of ${total} completed · ${total - completed} remaining`
+                    : "No tasks yet.";
+            }
+
+            // Render tasks, including Edit and Delete buttons.
+            function renderTasks() {
+                taskList.replaceChildren();
+
+                const visibleTasks = tasks.filter((task) => {
+                    if (currentFilter === "active") return !task.completed;
+                    if (currentFilter === "completed") return task.completed;
+                    return true;
+                });
+
+                emptyState.classList.toggle("hidden", visibleTasks.length > 0);
+
+                if (visibleTasks.length === 0) {
+                    emptyState.querySelector("p:last-child").textContent =
+                        tasks.length === 0 ? "Add your first task above." :
+                            currentFilter === "active" ? "No active tasks. You're doing great!" :
+                                "No tasks to show.";
+                }
+
+                visibleTasks.forEach((task) => {
+                    const row = document.createElement("div");
+                    row.className = "task-row" + (task.completed ? " completed" : "");
+
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.className = "task-check";
+                    checkbox.checked = task.completed;
+                    checkbox.setAttribute("aria-label", "Mark task completed");
+
+                    checkbox.addEventListener("change", function () {
+                        task.completed = checkbox.checked;
+                        persistTasks();
+                        renderTasks();
+                    });
+
+                    const content = document.createElement("div");
+                    content.className = "task-title";
+
+                    const title = document.createElement("p");
+                    title.className = "font-semibold";
+                    title.textContent = task.title;
+
+                    const priority = document.createElement("span");
+                    priority.className = "mt-1 inline-block text-xs " + ({
+                        Low: "text-green-700",
+                        Medium: "text-amber-700",
+                        High: "text-rose-700"
+                    }[task.priority]);
+                    priority.textContent = task.priority + " priority";
+
+                    content.append(title, priority);
+
+                    const actions = document.createElement("div");
+                    actions.className = "task-actions flex shrink-0 gap-2";
+
+                    const editButton = document.createElement("button");
+                    editButton.type = "button";
+                    editButton.className = "task-action edit-btn";
+                    editButton.textContent = "Edit";
+                    editButton.addEventListener("click", () => startEditing(task.id));
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.type = "button";
+                    deleteButton.className = "task-action delete-btn";
+                    deleteButton.textContent = "Delete";
+                    deleteButton.addEventListener("click", () => deleteTask(task.id));
+
+                    actions.append(editButton, deleteButton);
+                    row.append(checkbox, content, actions);
+                    taskList.appendChild(row);
+                });
+
+                updateStats();
+            }
+
+            // Add a task or save an edit.
+            taskForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                const title = taskInput.value.trim();
+                if (!title) {
+                    taskInput.focus();
+                    return;
+                }
+
+                if (editingTaskId !== null) {
+                    const task = tasks.find((item) => item.id === editingTaskId);
+
+                    if (task) {
+                        task.title = title;
+                        task.priority = priorityInput.value;
+                    }
+
+                    cancelEditing();
+                } else {
+                    tasks.unshift({
+                        id: String(Date.now()) + "-" + Math.random().toString(16).slice(2),
+                        title,
+                        priority: priorityInput.value,
+                        completed: false
+                    });
+                }
+
+                persistTasks();
+                taskForm.reset();
+                priorityInput.value = "Medium";
+                renderTasks();
+                taskInput.focus();
+            });
+
+            // Fill the form with the task being edited.
+            function startEditing(id) {
+                const task = tasks.find((item) => item.id === id);
+                if (!task) return;
+
+                editingTaskId = id;
+                taskInput.value = task.title;
+                priorityInput.value = task.priority;
+                submitTaskBtn.textContent = "Save Changes";
+                editNotice.classList.remove("hidden");
+                editNotice.classList.add("flex");
+                taskInput.focus();
+                taskInput.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+
+            // Exit edit mode.
+            function cancelEditing() {
+                editingTaskId = null;
+                editNotice.classList.add("hidden");
+                editNotice.classList.remove("flex");
+                submitTaskBtn.textContent = "+ Add Task";
+            }
+
+            $("#cancelEditBtn").addEventListener("click", function () {
+                cancelEditing();
+                taskForm.reset();
+                priorityInput.value = "Medium";
+            });
+
+            // Delete one task.
+            function deleteTask(id) {
+                const task = tasks.find((item) => item.id === id);
+                if (!task || !confirm('Delete "' + task.title + '"?')) return;
+
+                tasks = tasks.filter((item) => item.id !== id);
+
+                if (editingTaskId === id) {
+                    cancelEditing();
+                    taskForm.reset();
+                    priorityInput.value = "Medium";
+                }
+
+                persistTasks();
+                renderTasks();
+            }
+
+            // Filter tasks by status.
+            document.querySelectorAll(".filter-btn").forEach((button) => {
+                button.addEventListener("click", function () {
+                    currentFilter = button.dataset.filter;
+
+                    document.querySelectorAll(".filter-btn").forEach((item) => {
+                        item.classList.remove("bg-[#332b2b]", "text-white");
+                        item.classList.add("bg-[#fff1eb]", "text-[#805b59]");
+                    });
+
+                    button.classList.remove("bg-[#fff1eb]", "text-[#805b59]");
+                    button.classList.add("bg-[#332b2b]", "text-white");
+                    renderTasks();
+                });
+            });
+
+            // Delete all completed tasks.
+            $("#clearCompletedBtn").addEventListener("click", function () {
+                const count = tasks.filter((task) => task.completed).length;
+
+                if (!count) {
+                    alert("There are no completed tasks to clear.");
+                    return;
+                }
+
+                if (!confirm("Delete all " + count + " completed task(s)?")) return;
+
+                tasks = tasks.filter((task) => !task.completed);
+
+                if (editingTaskId !== null && !tasks.some((task) => task.id === editingTaskId)) {
+                    cancelEditing();
+                    taskForm.reset();
+                    priorityInput.value = "Medium";
+                }
+
+                persistTasks();
+                renderTasks();
+            });
+
+            // =================================
+            // FOCUS TIMER
+            // =================================
+            let timerSeconds = 25 * 60;
+            let timerInterval = null;
+
+            function updateTimer() {
+                $("#timerDisplay").textContent =
+                    String(Math.floor(timerSeconds / 60)).padStart(2, "0") + ":" +
+                    String(timerSeconds % 60).padStart(2, "0");
+            }
+
+            function stopTimer() {
+                if (timerInterval !== null) clearInterval(timerInterval);
+                timerInterval = null;
+                $("#startTimerBtn").textContent = "Start";
+            }
+
+            $("#startTimerBtn").addEventListener("click", function () {
+                if (timerInterval !== null) {
+                    stopTimer();
+                    $("#timerMessage").textContent = "Timer paused.";
+                    return;
+                }
+
+                $("#startTimerBtn").textContent = "Pause";
+                $("#timerMessage").textContent = "Stay focused. You've got this!";
+
+                timerInterval = setInterval(function () {
+                    timerSeconds--;
+                    updateTimer();
+
+                    if (timerSeconds <= 0) {
+                        stopTimer();
+                        timerSeconds = 0;
+                        updateTimer();
+                        $("#timerMessage").textContent = "Time is up! Take a little break 🌷";
+                        alert("Time is up! Take a little break 🌷");
+                    }
+                }, 1000);
+            });
+
+            $("#resetTimerBtn").addEventListener("click", function () {
+                stopTimer();
+                timerSeconds = 25 * 60;
+                updateTimer();
+                $("#timerMessage").textContent = "One thing at a time. You've got this.";
+            });
+
+            document.querySelectorAll(".timer-preset").forEach((button) => {
+                button.addEventListener("click", function () {
+                    stopTimer();
+                    timerSeconds = Number(button.dataset.minutes) * 60;
+                    updateTimer();
+                    $("#timerMessage").textContent = "Ready when you are ♡";
+                });
+            });
+
+            // =================================
+            // SNAKE GAME
+            // =================================
+            const canvas = $("#snakeCanvas");
+
+            if (canvas) {
+                const ctx = canvas.getContext("2d");
+                const cellSize = 20;
+                const cellCount = canvas.width / cellSize;
+
+                const scoreDisplay = $("#snakeScore");
+                const messageDisplay = $("#snakeMessage");
+                const startButton = $("#startSnakeBtn");
+                const pauseButton = $("#pauseSnakeBtn");
+
+                let snake = [];
+                let food = { x: 10, y: 10 };
+                let direction = { x: 1, y: 0 };
+                let nextDirection = { x: 1, y: 0 };
+                let snakeScore = 0;
+                let snakeInterval = null;
+                let snakeRunning = false;
+                let snakeOver = false;
+
+                // Place food in an empty cell.
+                function placeFood() {
+                    const emptyCells = [];
+
+                    for (let y = 0; y < cellCount; y++) {
+                        for (let x = 0; x < cellCount; x++) {
+                            if (!snake.some(part => part.x === x && part.y === y)) {
+                                emptyCells.push({ x, y });
+                            }
+                        }
+                    }
+
+                    if (emptyCells.length === 0) {
+                        finishSnake("Amazing! You filled the whole board!");
+                        return;
+                    }
+
+                    food = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                }
+
+                // Draw the game board.
+                function drawSnake() {
+                    ctx.fillStyle = "#fffaf7";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    // Board grid.
+                    ctx.strokeStyle = "#f3e8e2";
+                    ctx.lineWidth = 0.5;
+
+                    for (let i = 0; i <= cellCount; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(i * cellSize, 0);
+                        ctx.lineTo(i * cellSize, canvas.height);
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        ctx.moveTo(0, i * cellSize);
+                        ctx.lineTo(canvas.width, i * cellSize);
+                        ctx.stroke();
+                    }
+
+                    // Fruit.
+                    ctx.fillStyle = "#e58b78";
+                    ctx.beginPath();
+                    ctx.arc(
+                        food.x * cellSize + cellSize / 2,
+                        food.y * cellSize + cellSize / 2,
+                        cellSize / 2 - 3,
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.fill();
+
+                    // Snake body.
+                    snake.forEach((part, index) => {
+                        ctx.fillStyle = index === 0 ? "#526d5b" : "#8da891";
+                        ctx.beginPath();
+                        ctx.roundRect(
+                            part.x * cellSize + 2,
+                            part.y * cellSize + 2,
+                            cellSize - 4,
+                            cellSize - 4,
+                            5
+                        );
+                        ctx.fill();
+                    });
+
+                    // Game-over overlay.
+                    if (snakeOver) {
+                        ctx.fillStyle = "rgba(255, 250, 247, 0.9)";
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                        ctx.fillStyle = "#493940";
+                        ctx.textAlign = "center";
+                        ctx.font = "bold 25px sans-serif";
+                        ctx.fillText("Game Over!", canvas.width / 2, canvas.height / 2 - 8);
+
+                        ctx.font = "15px sans-serif";
+                        ctx.fillText(
+                            "Score: " + snakeScore,
+                            canvas.width / 2,
+                            canvas.height / 2 + 22
+                        );
+                    }
+                }
+
+                // Stop the game interval.
+                function stopSnakeTimer() {
+                    if (snakeInterval !== null) {
+                        clearInterval(snakeInterval);
+                        snakeInterval = null;
+                    }
+
+                    snakeRunning = false;
+                }
+
+                // Finish the game.
+                function finishSnake(text) {
+                    stopSnakeTimer();
+                    snakeOver = true;
+                    startButton.textContent = "Play Again";
+                    messageDisplay.textContent = text;
+                    drawSnake();
+                }
+
+                // Reset game state.
+                function resetSnake() {
+                    stopSnakeTimer();
+
+                    snake = [
+                        { x: 10, y: 10 },
+                        { x: 9, y: 10 },
+                        { x: 8, y: 10 }
+                    ];
+
+                    direction = { x: 1, y: 0 };
+                    nextDirection = { x: 1, y: 0 };
+                    snakeScore = 0;
+                    snakeOver = false;
+
+                    scoreDisplay.textContent = "0";
+                    pauseButton.textContent = "Pause";
+                    startButton.textContent = "Start Game";
+
+                    placeFood();
+                    drawSnake();
+                }
+
+                // Move snake and detect collisions.
+                function moveSnake() {
+                    direction = { ...nextDirection };
+
+                    const head = {
+                        x: snake[0].x + direction.x,
+                        y: snake[0].y + direction.y
+                    };
+
+                    const eating = head.x === food.x && head.y === food.y;
+
+                    // Wall collision.
+                    if (
+                        head.x < 0 ||
+                        head.x >= cellCount ||
+                        head.y < 0 ||
+                        head.y >= cellCount
+                    ) {
+                        finishSnake("Game over! Your score: " + snakeScore);
+                        return;
+                    }
+
+                    // Self collision.
+                    const bodyToCheck = eating ? snake : snake.slice(0, -1);
+
+                    if (bodyToCheck.some(part => part.x === head.x && part.y === head.y)) {
+                        finishSnake("Oops! Your score: " + snakeScore);
+                        return;
+                    }
+
+                    snake.unshift(head);
+
+                    if (eating) {
+                        snakeScore += 10;
+                        scoreDisplay.textContent = String(snakeScore);
+                        placeFood();
+
+                        if (snakeOver) {
+                            drawSnake();
+                            return;
+                        }
+                    } else {
+                        snake.pop();
+                    }
+
+                    drawSnake();
+                }
+
+                // Start or restart the game.
+                function startSnake() {
+                    if (snakeRunning) return;
+
+                    if (snakeOver || snake.length === 0) {
+                        resetSnake();
+                    }
+
+                    snakeRunning = true;
+                    startButton.textContent = "Playing...";
+                    pauseButton.textContent = "Pause";
+                    messageDisplay.textContent =
+                        "Use arrow keys, WASD, or the buttons to move.";
+
+                    snakeInterval = setInterval(moveSnake, 140);
+                }
+
+                // Pause or resume the game.
+                function toggleSnakePause() {
+                    if (snakeOver || snake.length === 0) {
+                        messageDisplay.textContent = "Press Start Game to begin.";
+                        return;
+                    }
+
+                    if (snakeRunning) {
+                        stopSnakeTimer();
+                        startButton.textContent = "Resume";
+                        pauseButton.textContent = "Resume";
+                        messageDisplay.textContent = "Game paused. Press Resume to continue.";
+                    } else {
+                        startSnake();
+                    }
+                }
+
+                // Change direction without reversing into the snake.
+                function changeSnakeDirection(name) {
+                    const directions = {
+                        up: { x: 0, y: -1 },
+                        down: { x: 0, y: 1 },
+                        left: { x: -1, y: 0 },
+                        right: { x: 1, y: 0 }
+                    };
+
+                    const candidate = directions[name];
+                    if (!candidate) return;
+
+                    if (
+                        candidate.x === -direction.x &&
+                        candidate.y === -direction.y
+                    ) {
+                        return;
+                    }
+
+                    nextDirection = candidate;
+                }
+
+                // Keyboard controls.
+                document.addEventListener("keydown", event => {
+                    const keyMap = {
+                        ArrowUp: "up",
+                        ArrowDown: "down",
+                        ArrowLeft: "left",
+                        ArrowRight: "right",
+                        w: "up", W: "up",
+                        s: "down", S: "down",
+                        a: "left", A: "left",
+                        d: "right", D: "right"
+                    };
+
+                    const selected = keyMap[event.key];
+                    if (!selected) return;
+
+                    if (event.target.closest("input, textarea, select")) return;
+
+                    if (event.key.startsWith("Arrow")) {
+                        event.preventDefault();
+                    }
+
+                    changeSnakeDirection(selected);
+                });
+
+                // Mobile controls, limited to the Snake Game section.
+                document.querySelectorAll("#snake-game [data-direction]").forEach(button => {
+                    button.addEventListener("click", () => {
+                        changeSnakeDirection(button.dataset.direction);
+                    });
+                });
+
+                // Game buttons.
+                startButton.addEventListener("click", startSnake);
+                pauseButton.addEventListener("click", toggleSnakePause);
+
+                // Initialize the game board.
+                resetSnake();
+                messageDisplay.textContent = "Press Start Game. Use the arrow keys to move.";
+            }
+
+        });
+    </script>
+</body>
+
+</html>
